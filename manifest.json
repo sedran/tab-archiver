@@ -1,0 +1,31 @@
+{
+  "manifest_version": 2,
+
+  "name": "Tab Archiver",
+  "short_name": "Tab Archiver",
+  
+  "description": "This extension archives tabs!",
+  "version": "1.0",
+  "author": "Serdar Kuzucu",
+
+  "permissions": [
+  	"tabs",
+  	"storage"
+  ],
+  
+  "browser_action": {
+    "default_icon": "logo_16.png",
+    "default_popup": "popup.html",
+    "default_title": "Tab Archiver"
+  },
+  
+  "background": {
+    "scripts": ["background.js"]
+  },
+  
+  "icons": {
+  	"16": "logo_16.png",
+	"48": "logo_48.png",
+	"128": "logo_128.png" 
+  }
+}

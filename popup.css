@@ -1,0 +1,32 @@
+.tab-archiver {
+	width: 400px;
+	background: #EEEEEE;
+}
+
+.topbar {
+	border-bottom: 1px solid #900;
+	padding: 5px;
+}
+
+.bottombar {
+	padding: 5px;
+}
+
+.bottombar #thetable .btn {
+	padding: 11px;
+}
+
+.bottombar table#thetable .short-td {
+	width: 85px;
+	text-align: right;
+}
+
+.bottombar table#thetable td.editable input {
+	margin-bottom: 0;
+}
+
+.bottombar p.dateP {
+	font-size: 11px;
+	margin: 0;
+	text-align: right;
+}
