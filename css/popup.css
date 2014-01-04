@@ -30,3 +30,11 @@
 	margin: 0;
 	text-align: right;
 }
+
+.bottombar a.openTabs {
+	display: block;
+	width: 248px;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}

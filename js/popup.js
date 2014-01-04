@@ -87,7 +87,7 @@ $(function() {
 	 */
 	app.createOpenTabsAnchor = function (name) {
 		var openTabsA = $('<a href="#" class="openTabs"></a>').html(name);
-		openTabsA.attr("title", "Click to open that state. This won't close your current tabs. We'll open a new window.");
+		openTabsA.attr("title", name + "\nClick to open that state.\nThis won't close your current tabs. We'll open a new window.");
 		return openTabsA;
 	};
 	
