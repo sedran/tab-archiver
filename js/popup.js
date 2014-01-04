@@ -37,7 +37,7 @@ $(function() {
 	/**
 	 * Remove everything, clear all saved states.
 	 */
-	app.clearArchive = function () {
+	app.clearArchive = function() {
 		app.savedStates = [];
 		app.saveStorage();
 		app.refreshUI();
@@ -46,7 +46,7 @@ $(function() {
 	/**
 	 * Save app.savedStates to chrome.storage.sync
 	 */
-	app.saveStorage = function () {
+	app.saveStorage = function() {
 		chrome.storage.sync.set({'savedStates': app.savedStates}, function() {
 			// console.log("OK, sync!");
 		});
@@ -55,7 +55,7 @@ $(function() {
 	/**
 	 * hide state table and show 'no state found' text or vice-versa
 	 */
-	app.switchContents = function () {
+	app.switchContents = function() {
 		var table = $("#thetable");
 		
 		if (app.savedStates.length > 0) {
@@ -70,7 +70,7 @@ $(function() {
 	/**
 	 * Clear the popup window and re-create UI
 	 */
-	app.refreshUI = function () {
+	app.refreshUI = function() {
 		var table = $("#thetable").html("");
 		
 		app.switchContents();
@@ -85,7 +85,7 @@ $(function() {
 	 * Creates DOM element for a.openTabs
 	 * The link of state which opens all tabs in that state
 	 */
-	app.createOpenTabsAnchor = function (name) {
+	app.createOpenTabsAnchor = function(name) {
 		var openTabsA = $('<a href="#" class="openTabs"></a>').html(name);
 		openTabsA.attr("title", name + "\nClick to open that state.\nThis won't close your current tabs. We'll open a new window.");
 		return openTabsA;
@@ -94,7 +94,7 @@ $(function() {
 	/**
 	 * Create DOM elements for a state row
 	 */
-	app.createArchiveRow = function (state) {
+	app.createArchiveRow = function(state) {
 		var tr = $('<tr class="warning"></tr>');
 		
 		// Remove button
@@ -159,7 +159,7 @@ $(function() {
 	/**
 	 * Callback function for remove state button in state table
 	 */
-	app.removeArchive = function () {
+	app.removeArchive = function() {
 		var tr = $(this).closest('tr');
 		var index = tr.index('tr');
 		app.savedStates.splice(index, 1);
@@ -174,7 +174,7 @@ $(function() {
 	 * If a state is being renamed, finishes rename process.
 	 * Saves the new name of that state
 	 */
-	app.closeIfInputOpen = function () {
+	app.closeIfInputOpen = function() {
 		if (app.currentEditIndex > -1) {
 			var val = app.currentEditInput.val();
 			var a = app.createOpenTabsAnchor(val);
@@ -192,7 +192,7 @@ $(function() {
 	 * Callback function to handle rename button click
 	 * Replaces the state name with an input field to rename it.
 	 */
-	app.showRenameInput = function () {
+	app.showRenameInput = function() {
 		app.closeIfInputOpen();
 		
 		var tr = $(this).closest('tr');
@@ -212,7 +212,7 @@ $(function() {
 	 * Callback function to handle override and update button click
 	 * Replaces a state's tabs with currently open tabs
 	 */
-	app.overrideAndUpdate = function () {
+	app.overrideAndUpdate = function() {
 		app.closeIfInputOpen();
 		
 		var tr = $(this).closest('tr');
@@ -228,6 +228,9 @@ $(function() {
 			}
 			currentState.date = (new Date()).getTime();
 			app.saveStorage();
+			
+			// Give a feedback to the user
+			app.blinkTrGreen(tr, 500);
 		});
 	};
 	
@@ -235,7 +238,7 @@ $(function() {
 	 * Callback function to handle open all tabs link click
 	 * Open all tabs in a specific state.
 	 */
-	app.openAllTabs = function () {
+	app.openAllTabs = function() {
 		var tr = $(this).closest('tr');
 		var index = tr.index('tr');
 		
@@ -260,7 +263,7 @@ $(function() {
 	/**
 	 * Converts a given Date object to a readable string.
 	 */
-	app.date = function (d) {
+	app.date = function(d) {
 		var day = d.getDate();
 		var month = app.months[d.getMonth()];
 		var year = d.getFullYear();
@@ -269,6 +272,22 @@ $(function() {
 		h = h < 10 ? "0" + h : h;
 		m = m < 10 ? "0" + m : m;
 		return month + ", " + day + " " + year + " " + h + ":" + m;
+	};
+	
+	/**
+	 * A simple animation for a given tr element
+	 * Makes a yellow tr element green for a timeout value
+	 */
+	app.blinkTrGreen = function(tr, timeout) {
+		if (tr[0].blinking !== true) {
+			tr[0].blinking = true;
+			
+			tr.removeClass('warning').addClass('success');
+			setTimeout(function () {
+				tr.removeClass('success').addClass('warning');
+				tr[0].blinking = false;
+			}, timeout);
+		}
 	};
 
 	/**
