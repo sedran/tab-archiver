@@ -1,31 +1,31 @@
 {
-  "manifest_version": 2,
+	"manifest_version": 2,
 
-  "name": "Tab Archiver",
-  "short_name": "Tab Archiver",
-  
-  "description": "This extension archives tabs!",
-  "version": "1.0",
-  "author": "Serdar Kuzucu",
+	"name": "Tab Archiver",
+	"short_name": "Tab Archiver",
 
-  "permissions": [
-  	"tabs",
-  	"storage"
-  ],
+	"description": "This extension archives tabs!",
+	"version": "1.0",
+	"author": "Serdar Kuzucu",
+
+	"permissions": [
+		"tabs",
+		"storage"
+	],
+
+	"browser_action": {
+		"default_icon": "img/logo_16.png",
+		"default_popup": "popup.html",
+		"default_title": "Tab Archiver"
+	},
+
+	"background": {
+		"scripts": ["js/background.js"]
+	},
   
-  "browser_action": {
-    "default_icon": "img/logo_16.png",
-    "default_popup": "popup.html",
-    "default_title": "Tab Archiver"
-  },
-  
-  "background": {
-    "scripts": ["js/background.js"]
-  },
-  
-  "icons": {
-  	"16": "img/logo_16.png",
-	"48": "img/logo_48.png",
-	"128": "img/logo_128.png" 
-  }
+	"icons": {
+		"16": "img/logo_16.png",
+		"48": "img/logo_48.png",
+		"128": "img/logo_128.png" 
+	}
 }
