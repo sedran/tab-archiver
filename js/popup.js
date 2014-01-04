@@ -226,8 +226,12 @@ $(function() {
 				var tab = tabs[i];
 				currentState.tabs.push({url: tab.url});
 			}
-			currentState.date = (new Date()).getTime();
+			
+			var date = new Date();
+			currentState.date = date.getTime();
 			app.saveStorage();
+			
+			tr.find('p.dateP').html(app.date(date));
 			
 			// Give a feedback to the user
 			app.blinkTrGreen(tr, 500);

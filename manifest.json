@@ -5,7 +5,7 @@
 	"short_name": "Tab Archiver",
 
 	"description": "This extension archives tabs!",
-	"version": "1.0",
+	"version": "1.1",
 	"author": "Serdar Kuzucu",
 
 	"permissions": [
