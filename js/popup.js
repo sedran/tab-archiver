@@ -1,12 +1,28 @@
+/**
+ * Popup window's code.
+ *
+ * @author Serdar Kuzucu
+ */
 $(function() {
-	
+	// the application scope
 	var app = {};
 	
+	/**
+	 * saved states array for fast access
+	 * normally, they are stored in chrome.storage.sync
+	 */
 	app.savedStates = null;
 	
+	/**
+	 * for fast access to item currently being renamed
+	 */
 	app.currentEditInput = null;
 	app.currentEditIndex = -1;
 	
+	/**
+	 * initializes the popup window.
+	 * reads the data from chrome.storage.sync and prepares the UI
+	 */
 	app.initialize = function() {
 		chrome.storage.sync.get('savedStates', function(resp) {
 			if (resp.savedStates && resp.savedStates.length) {
@@ -18,18 +34,27 @@ $(function() {
 		});
 	};
 	
+	/**
+	 * Remove everything, clear all saved states.
+	 */
 	app.clearArchive = function () {
 		app.savedStates = [];
 		app.saveStorage();
 		app.refreshUI();
 	};
 	
+	/**
+	 * Save app.savedStates to chrome.storage.sync
+	 */
 	app.saveStorage = function () {
 		chrome.storage.sync.set({'savedStates': app.savedStates}, function() {
-			console.log("OK, sync!");
+			// console.log("OK, sync!");
 		});
 	};
 	
+	/**
+	 * hide state table and show 'no state found' text or vice-versa
+	 */
 	app.switchContents = function () {
 		var table = $("#thetable");
 		
@@ -42,6 +67,9 @@ $(function() {
 		}
 	};
 	
+	/**
+	 * Clear the popup window and re-create UI
+	 */
 	app.refreshUI = function () {
 		var table = $("#thetable").html("");
 		
@@ -53,12 +81,19 @@ $(function() {
 		}
 	};
 	
+	/**
+	 * Creates DOM element for a.openTabs
+	 * The link of state which opens all tabs in that state
+	 */
 	app.createOpenTabsAnchor = function (name) {
 		var openTabsA = $('<a href="#" class="openTabs"></a>').html(name);
 		openTabsA.attr("title", "Click to open that state. This won't close your current tabs. We'll open a new window.");
 		return openTabsA;
 	};
 	
+	/**
+	 * Create DOM elements for a state row
+	 */
 	app.createArchiveRow = function (state) {
 		var tr = $('<tr class="warning"></tr>');
 		var removeBtn = $('<button class="btn btn-danger removeArchive"><i class="icon-trash icon-white"></i></button>');
@@ -73,11 +108,17 @@ $(function() {
 		return tr;
 	};
 	
+	/**
+	 * Callback function for save and close button click
+	 */
 	app.onSaveAndCloseClick = function() {
 		chrome.tabs.query({currentWindow: true}, app.saveAndCloseTabs);
 		return false;
 	};
 	
+	/**
+	 * Process tabs passed as an argument, save them, and close them.
+	 */
 	app.saveAndCloseTabs = function(tabs) {
 		var currentState = {name: "Untitled Tab List", tabs: []};
 		var removeTabIds = [];
@@ -106,6 +147,9 @@ $(function() {
 		chrome.tabs.remove(removeTabIds);
 	};
 	
+	/**
+	 * Callback function for remove state button in state table
+	 */
 	app.removeArchive = function () {
 		var tr = $(this).closest('tr');
 		var index = tr.index('tr');
@@ -117,6 +161,10 @@ $(function() {
 		app.switchContents();
 	};
 	
+	/**
+	 * If a state is being renamed, finishes rename process.
+	 * Saves the new name of that state
+	 */
 	app.closeIfInputOpen = function () {
 		if (app.currentEditIndex > -1) {
 			var val = app.currentEditInput.val();
@@ -131,6 +179,10 @@ $(function() {
 		}
 	};
 	
+	/**
+	 * Callback function to handle rename button click
+	 * Replaces the state name with an input field to rename it.
+	 */
 	app.showRenameInput = function () {
 		app.closeIfInputOpen();
 		
@@ -147,6 +199,10 @@ $(function() {
 		input.select();
 	};
 	
+	/**
+	 * Callback function to handle open all tabs link click
+	 * Open all tabs in a specific state.
+	 */
 	app.openAllTabs = function () {
 		var tr = $(this).closest('tr');
 		var index = tr.index('tr');
@@ -158,12 +214,20 @@ $(function() {
 			urls.push(state.tabs[i].url);
 		}
 		
+		// This job is hard to do in popup
+		// so we kindly ask background page to do it.
 		chrome.runtime.sendMessage({fn: "openTabs", urls: urls});
 		return false;
 	};
 	
+	/**
+	 * Month names for date parsing
+	 */
 	app.months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	
+	/**
+	 * Converts a given Date object to a readable string.
+	 */
 	app.date = function (d) {
 		var day = d.getDate();
 		var month = app.months[d.getMonth()];
@@ -175,6 +239,9 @@ $(function() {
 		return month + ", " + day + " " + year + " " + h + ":" + m;
 	};
 
+	/**
+	 * Run app and bind listeners.
+	 */
 	app.initialize();
 	$("#saveClose").click(app.onSaveAndCloseClick);
 	$("#clearAll").click(app.clearArchive);
