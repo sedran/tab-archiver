@@ -14,18 +14,18 @@
   ],
   
   "browser_action": {
-    "default_icon": "logo_16.png",
+    "default_icon": "img/logo_16.png",
     "default_popup": "popup.html",
     "default_title": "Tab Archiver"
   },
   
   "background": {
-    "scripts": ["background.js"]
+    "scripts": ["js/background.js"]
   },
   
   "icons": {
-  	"16": "logo_16.png",
-	"48": "logo_48.png",
-	"128": "logo_128.png" 
+  	"16": "img/logo_16.png",
+	"48": "img/logo_48.png",
+	"128": "img/logo_128.png" 
   }
 }
