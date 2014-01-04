@@ -96,15 +96,24 @@ $(function() {
 	 */
 	app.createArchiveRow = function (state) {
 		var tr = $('<tr class="warning"></tr>');
+		
+		// Remove button
 		var removeBtn = $('<button class="btn btn-danger removeArchive"><i class="icon-trash icon-white"></i></button>');
-		removeBtn.attr("title", "Click to remove that archive! This operation cannot be undone!");
+		removeBtn.attr("title", "Remove Archive\nClick to remove that archive!\nThis operation cannot be undone!");
+		
+		// Rename button
 		var renameBtn = $('<button class="btn btn-success renameArchive"><i class="icon-edit icon-white"></i></button>');
-		renameBtn.attr("title", "Rename this archive to remember what tabs are in it when you look at it.");
+		renameBtn.attr("title", "Rename Archive\nRename this archive to remember what tabs are in it when you look at it.");
+		
+		// Override and Update button
+		var overrideBtn = $('<button class="btn btn-warning overrideAndUpdate"><i class="icon-fire icon-white"></i></button>');
+		overrideBtn.attr("title", "Override and Update\nUpdate this archive's content with current open tabs. This operation doesn't close your open tabs.");
+		
 		var openTabsA = app.createOpenTabsAnchor(state.name);
 		var dateP = $('<p class="dateP"></p>').html(app.date(new Date(state.date)));
 		
 		$('<td class="editable"></td>').append(openTabsA).append(dateP).appendTo(tr);
-		$('<td class="short-td"></td>').append(renameBtn).append('&nbsp;').append(removeBtn).appendTo(tr);
+		$('<td class="short-td"></td>').append(renameBtn).append('&nbsp;').append(overrideBtn).append('&nbsp;').append(removeBtn).appendTo(tr);
 		return tr;
 	};
 	
@@ -200,6 +209,29 @@ $(function() {
 	};
 	
 	/**
+	 * Callback function to handle override and update button click
+	 * Replaces a state's tabs with currently open tabs
+	 */
+	app.overrideAndUpdate = function () {
+		app.closeIfInputOpen();
+		
+		var tr = $(this).closest('tr');
+		var index = tr.index('tr');
+		
+		var currentState = app.savedStates[index];
+		currentState.tabs = [];
+		
+		chrome.tabs.query({currentWindow: true}, function (tabs) {
+			for (var i = 0; i < tabs.length; i++) {
+				var tab = tabs[i];
+				currentState.tabs.push({url: tab.url});
+			}
+			currentState.date = (new Date()).getTime();
+			app.saveStorage();
+		});
+	};
+	
+	/**
 	 * Callback function to handle open all tabs link click
 	 * Open all tabs in a specific state.
 	 */
@@ -247,6 +279,7 @@ $(function() {
 	$("#clearAll").click(app.clearArchive);
 	$(document).on('click', '.removeArchive', app.removeArchive);
 	$(document).on('click', '.renameArchive', app.showRenameInput);
+	$(document).on('click', '.overrideAndUpdate', app.overrideAndUpdate);
 	$(document).on('click', '.openTabs', app.openAllTabs);
 	$(document).on('keyup', 'input.edit-input', function(e) {
 		if (e.which == 13) {
