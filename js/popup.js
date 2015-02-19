@@ -124,11 +124,31 @@ $(function() {
 		chrome.tabs.query({currentWindow: true}, app.saveAndCloseTabs);
 		return false;
 	};
+	/**
+	 * Callback function for save button click
+	 */
+	app.onSaveNotCloseClick = function() {
+		chrome.tabs.query({currentWindow: true}, app.saveNotCloseTabs);
+		return false;
+	};
 	
 	/**
-	 * Process tabs passed as an argument, save them, and close them.
+	 * Process tabs passed as an argument, call saving method, and close them.
 	 */
 	app.saveAndCloseTabs = function(tabs) {
+		app.saveNotCloseTabs(tabs);
+		var removeTabIds = [];
+		for (var i = 0; i < tabs.length; i++) {
+			var tab = tabs[i];
+			removeTabIds.push(tab.id);
+		}
+		chrome.tabs.create({active: true});
+		chrome.tabs.remove(removeTabIds);
+	};
+	/**
+	 * Process tabs passed as an argument, save them.
+	 */
+	app.saveNotCloseTabs = function(tabs) {
 		var currentState = {name: "Untitled Tab List", tabs: []};
 		var removeTabIds = [];
 		
@@ -151,10 +171,11 @@ $(function() {
 		if (app.currentEditIndex > -1) {
 			app.currentEditIndex++;
 		}
-		
-		chrome.tabs.create({active: true});
-		chrome.tabs.remove(removeTabIds);
+
 	};
+	
+	
+	
 	
 	/**
 	 * Callback function for remove state button in state table
@@ -299,6 +320,7 @@ $(function() {
 	 */
 	app.initialize();
 	$("#saveClose").click(app.onSaveAndCloseClick);
+	$("#saveNotClose").click(app.onSaveNotCloseClick);
 	$("#clearAll").click(app.clearArchive);
 	$(document).on('click', '.removeArchive', app.removeArchive);
 	$(document).on('click', '.renameArchive', app.showRenameInput);
